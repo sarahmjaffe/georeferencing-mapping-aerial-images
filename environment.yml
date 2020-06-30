@@ -1,4 +1,4 @@
-name: earth-analytics-python
+name: auto-georef-project
 channels:
   - conda-forge
   - defaults
@@ -6,6 +6,10 @@ channels:
 dependencies:
   - python=3.7
   - pip
+
+  # AWS
+  - boto3
+
   # Core scientific python
   - numpy
   - matplotlib
@@ -15,12 +19,13 @@ dependencies:
   - kiwisolver
 
   # Spatial packages
-  #- rasterio  
+  #- rasterio
   - pysal
   - pyproj
   - rasterstats
   - geopy
   - cartopy
+
   #- geopandas
   - contextily
   - earthpy
@@ -32,18 +37,21 @@ dependencies:
   - tweepy
 
   # Natural language processing
-  - nltk 
+  - nltk
   - textblob
 
   # Jupyter Environment
+  - jupyter
+  - papermill
   - autopep8
   - jupyterlab
-  - notebook 
-  # Do we need this?
+  - notebook
   - ipython
   - jupyter_contrib_nbextensions
   - nbclean
-  # Autograding
-  - matplotcheck
-  - nbgrader
 
+  # For image cleaning
+  - opencv
+
+  - pip:
+    - enum
