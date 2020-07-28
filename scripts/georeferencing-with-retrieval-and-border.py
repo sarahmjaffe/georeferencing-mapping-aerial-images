@@ -1,52 +1,12 @@
-# Import packages
 import os
 from glob import glob
 from osgeo import gdal, osr
 
-import pandas as pd
 import pyproj
 from pyproj import Proj
 
 import earthpy as et
-from mosaic import GeoMosaicObject
-from mosaic import GeoMosaicBucket
-
-# This class represents the source CSV file containing the image details.
-# Note that this approach can be extended further by defining a class that represents
-# the image itself with the corresponding metadata details. For future
-# consideration.
-class GeoMosaicImageCatalog:
-
-    def __init__(self, source):
-        """ Constructor """
-        self._centroid_df = pd.read_csv(source)
-        self._centroid_df.lnexp_MEDIAFILENAME = self._centroid_df.lnexp_MEDIAFILENAME.replace({'.jpg':'.tif'}, regex=True)
-
-    def isin(self, image):
-        """ Returns true if image file is present in the source csv """
-        result = self._centroid_df.isin({'lnexp_MEDIAFILENAME':[image]})
-        return result.any()['lnexp_MEDIAFILENAME']
-
-    def indexof(self, image):
-        """ Returns the dataframe index corresponding to the given image """
-        result = self._centroid_df.isin({'lnexp_MEDIAFILENAME':[image]})
-        return result['lnexp_MEDIAFILENAME'][result['lnexp_MEDIAFILENAME'] == True].index[0]
-
-    def DDX(self, image):
-        """ Returns the DDX value for the image """
-        return  self._centroid_df['DDX'][self.indexof(image)]
-
-    def DDY(self, image):
-        """ Returns the DDY for the image """
-        return self._centroid_df['DDY'][self.indexof(image)]
-
-    def year(self, image):
-        """ Returns the year the image was taken """
-        return self._centroid_df['Date'][self.indexof(image)][5:]
-
-    def county1(self, image):
-        """ Returns the name of the county where the image was taken """
-        return self._centroid_df['County#1'][self.indexof(image)]
+import mosaic
 
 # Answer these questions to run through the remainder of the notebook:
 # What format are the images in: .jpg vs. .tif?
@@ -55,9 +15,6 @@ img_format = '.tif'
 # What is the .csv name with images and centroid data?
 # FOR TESTING: 'ElPaso_Batch1_YL_20180124_geometa.csv'
 specified_df = 'Weld_20200430132018_DD.csv'
-
-# AWS S3 bucket containing the image files
-image_bucket = 'cubl-research-geo'
 
 # What is the pixel size and width?
 # Remember to use to use negative for second variable
@@ -79,8 +36,8 @@ if __name__ == "__main__":
     # Processing of individual image files starts here. Essentially we're going to iterate through
     # the list of items in the S3 bucket and process each image separately. We will also check that
     # the current image is also listed in the source CSV file. Here goes ...
-    icat = GeoMosaicImageCatalog(specified_df)
-    gmb = GeoMosaicBucket(image_bucket)
+    icat = mosaic.GeoMosaicImageCatalog(specified_df)
+    gmb = mosaic.GeoMosaicBucket()
     for image in gmb.items:
 
         # First check to see if the image in the bucket is also listed in the data frame
@@ -88,7 +45,7 @@ if __name__ == "__main__":
         if icat.isin(image):
 
             # Download the image from S3
-            GeoMosaicObject(image, img_input_path)
+            mosaic.GeoMosaicObject(image, img_input_path)
 
             # Open the image to work on it
             print('Working on image {} ...'.format(image))
@@ -116,7 +73,7 @@ if __name__ == "__main__":
             # Calculating with coordinates from centroid to top left corner
             x_topleft = easting - (pixel_size_estim/2) - (pixel_size_estim * top_img_pixel)
             y_topleft = northing + (pixel_size_estim/2) + (pixel_size_estim * left_img_pixel)
-            print('Top left UTM coordinates: {0},{1}'.format(x_topleft, y_topleft))
+            print('Top left UTM coordinates: {0},{1}\n\n'.format(x_topleft, y_topleft))
 
             # Reformatting the image to geotiff
             format = 'GTiff'
