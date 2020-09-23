@@ -60,14 +60,14 @@ Your workstation is now ready to go!  That means that when you are ready to work
 i) open your terminal
 ii) navigate to the folder
 iii) activate your environment (`conda activate auto-georef-project`)
-iv) type `jupyter notebook` (we will talk about this later) 
+iv) type `jupyter notebook` (we will talk about this later)
 
 ### 2. Required items: Images and Center Points Metadata
 #### Images
-
-
+RETURN TO
 
 #### Metadata
+RETURN TO
 
 ## Workflow
 The following reflects the workflow being used to georeference a single image:
