@@ -8,6 +8,8 @@ from pyproj import Proj
 import earthpy as et
 import mosaic
 
+# TESTING TO SEE IF REPO IS CONNECTED - WILL DELETE WHEN CHECKED!
+
 # Answer these questions to run through the remainder of the notebook:
 # What format are the images in: .jpg vs. .tif?
 img_format = '.tif'
